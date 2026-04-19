@@ -1,0 +1,173 @@
+# vpype-penset
+
+Pen set infrastructure for [vpype](https://github.com/abey79/vpype) plotter plugins. Provides predefined pen sets and pipeline commands for applying pen colors and widths to multi-layer plotter output.
+
+
+## Installation
+
+```bash
+pip install vpype-penset
+```
+
+Or inject it into an existing `vpype` installation:
+
+```bash
+pipx inject vpype vpype-penset
+```
+
+For development:
+
+```bash
+pip install -e ".[dev]"
+```
+
+## Usage
+
+### Set pen set upstream, apply downstream
+
+Colorize assigns pens to layers in order: layer 1 gets pen 1, layer 2 gets pen 2, etc.
+Use `-l` on geometry commands to target a specific pen from the set.
+
+```bash
+# Draw concentric circles with pens 1, 2, and 3 from the warm palette
+vpype penset warm circle -l 1 0 0 5cm circle -l 2 0 0 4cm circle -l 3 0 0 3cm colorize write out.svg
+
+# Skip pen 2 — only use pens 1 and 3
+vpype penset warm circle -l 1 0 0 5cm circle -l 3 0 0 3cm colorize write out.svg
+```
+
+<img src="docs/images/warm.svg" width="200" alt="Warm pen set applied to concentric circles">
+
+### Override pen set at colorize
+
+```bash
+vpype circle -l 1 0 0 3cm circle -l 2 0 0 2cm circle -l 3 0 0 1cm colorize --penset cool write out.svg
+```
+
+### Custom hex colors
+
+```bash
+vpype penset "#ff0000,#00ff00,#0000ff" ... colorize write out.svg
+```
+
+### Load from a TOML file
+
+```bash
+vpype penset my-pens.toml ... colorize write out.svg
+```
+
+## Available Pen Sets
+
+### Artistic
+
+| | Name | Pens | Description |
+|---|------|------|-------------|
+| <img src="docs/images/warm.svg" width="80"> | `warm` | 6 | Warm reds, oranges, yellows |
+| <img src="docs/images/cool.svg" width="80"> | `cool` | 6 | Cool blues and teals |
+| <img src="docs/images/earth.svg" width="80"> | `earth` | 6 | Earth tones |
+| <img src="docs/images/rainbow.svg" width="80"> | `rainbow` | 7 | Full spectrum ROYGBIV |
+| <img src="docs/images/grayscale.svg" width="80"> | `grayscale` | 5 | Black to light gray |
+| <img src="docs/images/viridis.svg" width="80"> | `viridis` | 11 | Perceptually uniform (matplotlib-style) |
+
+### Plotter Pens
+
+| | Name | Pens | Description |
+|---|------|------|-------------|
+| <img src="docs/images/stabilo88.svg" width="80"> | `stabilo88` | 8 | Stabilo Point 88 pen colors (0.4mm) |
+| <img src="docs/images/staedtler.svg" width="80"> | `staedtler` | 8 | Staedtler Triplus pen colors (0.3mm) |
+| <img src="docs/images/pilot_g2.svg" width="80"> | `pilot_g2` | 8 | Pilot G-2 0.5 roller ink pen colors |
+
+## Commands
+
+### `penset`
+
+Sets the active pen set for downstream commands. Accepts a built-in name, comma-separated hex colors (with optional pen width), or a TOML file path.
+
+```bash
+vpype penset warm ...              # Built-in pen set
+vpype penset "#f00,#0f0" ...       # Custom hex colors
+vpype penset "#f00:0.7,#0f0:0.5"  # Hex colors with pen widths
+vpype penset my-pens.toml ...      # TOML file
+```
+
+### `colorize`
+
+Applies the active pen set to document layers, assigning `vp_color` (and `vp_pen_width` when defined) to each layer.
+
+```bash
+vpype penset warm circle -l 1 0 0 5cm circle -l 2 0 0 4cm circle -l 3 0 0 3cm colorize write out.svg
+vpype circle -l 1 0 0 3cm circle -l 2 0 0 2cm colorize --penset cool write out.svg
+vpype penset warm circle -l 1 0 0 5cm circle -l 2 0 0 3cm colorize --reverse write out.svg
+```
+
+### `pensets`
+
+Lists all available built-in pen sets with their colors:
+
+```bash
+vpype pensets
+```
+
+### `peninfo`
+
+Prints the active pen set in a compact table for quick inspection:
+
+```bash
+vpype penset stabilo88 peninfo
+vpype peninfo --penset pilot_g2
+```
+
+## TOML Pen Set Format
+
+A pen set file defines pens with a color, optional tip width (mm), and optional name:
+
+```toml
+[penset]
+name = "my-pens"      # optional — defaults to the filename
+
+[[penset.pens]]
+color = "#000000"      # required — hex color (#RRGGBB or #RGB)
+width = 0.7            # optional — tip width in mm
+name = "Black 0.7"     # optional — human-readable label
+
+[[penset.pens]]
+color = "#0000ff"
+width = 0.5
+name = "Blue 0.5"
+
+[[penset.pens]]
+color = "#ff0000"
+```
+
+The `[penset]` table is required. Each `[[penset.pens]]` entry must have a `color`
+field; `width` and `name` are optional. When `colorize` applies a pen set, layers
+receive both `vp_color` and (if present) `vp_pen_width` properties.
+
+## API for Plugin Developers
+
+vpype-penset is designed to be consumed by other vpype plugins:
+
+```python
+from vpype_penset import PenSet, PEN_SETS, PenSetParamType
+from vpype_penset import resolve_penset, store_penset, PENSET_METADATA_KEY
+
+# Add --penset option to your Click command
+@click.option("--penset", type=PenSetParamType(), default=None)
+
+# Resolve pen set from CLI arg or document metadata
+ps = resolve_penset(doc, penset_arg)
+
+# Store pen set for downstream commands
+store_penset(doc, my_penset)
+
+# Sample colors for N layers
+colors = ps.sample_colors(num_layers)  # Cycles if N > pen set size
+```
+
+### Pipeline Metadata
+
+Pen sets flow through the pipeline via `doc.metadata["vpype_penset.active"]`.
+
+## License
+
+MIT

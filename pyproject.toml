@@ -1,0 +1,79 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vpype-penset"
+version = "0.1.0"
+description = "Pen set infrastructure for vpype plotter plugins"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "mreierson", email = "mreierson@users.noreply.github.com" }]
+keywords = ["vpype", "penset", "plotter", "generative-art", "pen-plotter", "color"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Plugins",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Artistic Software",
+    "Topic :: Multimedia :: Graphics",
+    "Typing :: Typed",
+]
+dependencies = [
+    "click>=8.0",
+    "vpype>=1.14,<2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.2",
+    "mypy>=1.0",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.6",
+]
+
+[project.urls]
+Homepage = "https://github.com/mreierson/vpype-penset"
+Repository = "https://github.com/mreierson/vpype-penset"
+Documentation = "https://github.com/mreierson/vpype-penset#readme"
+Issues = "https://github.com/mreierson/vpype-penset/issues"
+
+[project.entry-points."vpype.plugins"]
+penset = "vpype_penset.commands.penset_cmd:penset"
+colorize = "vpype_penset.commands.colorize:colorize"
+peninfo = "vpype_penset.commands.peninfo_cmd:peninfo"
+pensets = "vpype_penset.commands.pensets_cmd:pensets"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vpype_penset"]
+
+[tool.hatch.build]
+include = [
+    "src/vpype_penset/**/*.py",
+    "src/vpype_penset/py.typed",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+no_implicit_optional = true
