@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Generate pen set preview images (SVG + PNG) for documentation.
+# Generate pen set preview SVGs for documentation.
 #
-# Requires: vpype with vpype-penset installed, cairosvg
+# Requires: vpype with vpype-penset installed
 #
 # Usage: ./docs/generate_images.sh
 
@@ -9,7 +9,6 @@ set -euo pipefail
 
 OUTDIR="docs/images"
 OUTER_RADIUS=5  # cm
-PNG_WIDTH=1200  # px
 
 mkdir -p "$OUTDIR"
 
@@ -31,14 +30,9 @@ while read -r name count; do
     done
 
     svg="$OUTDIR/$name.svg"
-    png="$OUTDIR/$name.png"
 
-    # Generate SVG
     vpype penset "$name" $circles colorize write "$svg"
-
-    # Convert to PNG
-    cairosvg "$svg" -o "$png" -W "$PNG_WIDTH"
 
 done <<< "$pen_counts"
 
-echo "Done. Generated SVG + PNG in $OUTDIR/"
+echo "Done. Generated SVG in $OUTDIR/"

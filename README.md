@@ -36,7 +36,7 @@ vpype penset warm circle -l 1 0 0 5cm circle -l 2 0 0 4cm circle -l 3 0 0 3cm co
 vpype penset warm circle -l 1 0 0 5cm circle -l 3 0 0 3cm colorize write out.svg
 ```
 
-<img src="docs/images/warm.png" width="200" alt="Warm pen set applied to concentric circles">
+<img src="docs/images/warm.svg" width="200" alt="Warm pen set applied to concentric circles">
 
 ### Override pen set at colorize
 
@@ -62,20 +62,20 @@ vpype penset my-pens.toml ... colorize write out.svg
 
 | | Name | Pens | Description |
 |---|------|------|-------------|
-| <img src="docs/images/warm.png" width="80"> | `warm` | 6 | Warm reds, oranges, yellows |
-| <img src="docs/images/cool.png" width="80"> | `cool` | 6 | Cool blues and teals |
-| <img src="docs/images/earth.png" width="80"> | `earth` | 6 | Earth tones |
-| <img src="docs/images/rainbow.png" width="80"> | `rainbow` | 7 | Full spectrum ROYGBIV |
-| <img src="docs/images/grayscale.png" width="80"> | `grayscale` | 5 | Black to light gray |
-| <img src="docs/images/viridis.png" width="80"> | `viridis` | 11 | Perceptually uniform (matplotlib-style) |
+| <img src="docs/images/warm.svg" width="80"> | `warm` | 6 | Warm reds, oranges, yellows |
+| <img src="docs/images/cool.svg" width="80"> | `cool` | 6 | Cool blues and teals |
+| <img src="docs/images/earth.svg" width="80"> | `earth` | 6 | Earth tones |
+| <img src="docs/images/rainbow.svg" width="80"> | `rainbow` | 7 | Full spectrum ROYGBIV |
+| <img src="docs/images/grayscale.svg" width="80"> | `grayscale` | 5 | Black to light gray |
+| <img src="docs/images/viridis.svg" width="80"> | `viridis` | 11 | Perceptually uniform (matplotlib-style) |
 
 ### Plotter Pens
 
 | | Name | Pens | Description |
 |---|------|------|-------------|
-| <img src="docs/images/stabilo88.png" width="80"> | `stabilo88` | 8 | Stabilo Point 88 pen colors (0.4mm) |
-| <img src="docs/images/staedtler.png" width="80"> | `staedtler` | 8 | Staedtler Triplus pen colors (0.3mm) |
-| <img src="docs/images/pilot_g2.png" width="80"> | `pilot_g2` | 8 | Pilot G-2 0.5 roller ink pen colors |
+| <img src="docs/images/stabilo88.svg" width="80"> | `stabilo88` | 8 | Stabilo Point 88 pen colors (0.4mm) |
+| <img src="docs/images/staedtler.svg" width="80"> | `staedtler` | 8 | Staedtler Triplus pen colors (0.3mm) |
+| <img src="docs/images/pilot_g2.svg" width="80"> | `pilot_g2` | 8 | Pilot G-2 0.5 roller ink pen colors |
 | | `pigma` | 8 | Sakura Pigma Micron colors (0.45mm / size 05) |
 | | `pigma_sizes` | 6 | Sakura Pigma Micron black in 6 tip sizes (005-08) |
 | | `copic` | 12 | Copic marker representative set (fine tip 0.5mm) |
