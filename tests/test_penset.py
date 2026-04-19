@@ -128,10 +128,7 @@ class TestInterpolate:
         """A 6-pen gradient from black to white for predictable interpolation."""
         return PenSet(
             "grad",
-            tuple(
-                Pen(color=vp.Color(v, v, v))
-                for v in (0, 50, 100, 150, 200, 250)
-            ),
+            tuple(Pen(color=vp.Color(v, v, v)) for v in (0, 50, 100, 150, 200, 250)),
         )
 
     def test_interpolate_same_count(self, six_pen_set: PenSet):

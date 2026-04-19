@@ -63,8 +63,7 @@ def penswatch(doc: vp.Document, penset_arg: PenSet | None) -> vp.Document:
     ps = resolve_penset(doc, penset_arg)
     if ps is None:
         raise click.UsageError(
-            "No pen set active. Use 'penset <name>' before penswatch, "
-            "or pass --penset <name>."
+            "No pen set active. Use 'penset <name>' before penswatch, or pass --penset <name>."
         )
 
     # Create a fresh document for the swatch sheet.

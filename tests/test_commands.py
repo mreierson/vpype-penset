@@ -167,10 +167,7 @@ class TestPenexportCommand:
         output = tmp_path / "trip.toml"
         vpype_cli.execute(f'penset pilot_g2 penexport "{output}"')
         doc = vpype_cli.execute(
-            f'penset "{output}" '
-            "line --layer 1 0 0 10mm 10mm "
-            "line --layer 2 0 0 20mm 20mm "
-            "colorize"
+            f'penset "{output}" line --layer 1 0 0 10mm 10mm line --layer 2 0 0 20mm 20mm colorize'
         )
         assert doc is not None
         layers = sorted(doc.layers)
