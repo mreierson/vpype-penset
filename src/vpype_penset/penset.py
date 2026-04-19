@@ -71,6 +71,53 @@ class PenSet:
         """Sample n colors from the pen set (convenience method)."""
         return [pen.color for pen in self.sample_pens(n)]
 
+    def interpolate(self, n: int) -> PenSet:
+        """Generate a new PenSet with *n* colors interpolated from this set.
+
+        Uses linear interpolation in RGB space between adjacent pen colors.
+
+        - If *n* <= len(self.pens), evenly-spaced pens are sampled from the
+          existing set.
+        - If *n* > len(self.pens), new colours are interpolated between
+          adjacent pens.
+
+        Returned pens have ``width=None`` and names like ``"interp-0"``.
+        """
+        if n <= 0:
+            return PenSet(f"{self.name}-interp", ())
+
+        src = self.pens
+        k = len(src)
+
+        if k == 0:
+            return PenSet(
+                f"{self.name}-interp",
+                tuple(Pen(color=vp.Color(0, 0, 0), name=f"interp-{i}") for i in range(n)),
+            )
+
+        if n == 1:
+            # Return the first color.
+            c = src[0].color
+            return PenSet(
+                f"{self.name}-interp",
+                (Pen(color=vp.Color(c.red, c.green, c.blue), name="interp-0"),),
+            )
+
+        result: list[Pen] = []
+        for i in range(n):
+            # Map i to a position in [0, k-1]
+            t = i * (k - 1) / (n - 1)
+            lo = int(t)
+            hi = min(lo + 1, k - 1)
+            frac = t - lo
+
+            r = round(src[lo].color.red + frac * (src[hi].color.red - src[lo].color.red))
+            g = round(src[lo].color.green + frac * (src[hi].color.green - src[lo].color.green))
+            b = round(src[lo].color.blue + frac * (src[hi].color.blue - src[lo].color.blue))
+            result.append(Pen(color=vp.Color(r, g, b), name=f"interp-{i}"))
+
+        return PenSet(f"{self.name}-interp", tuple(result))
+
     def __len__(self) -> int:
         return len(self.pens)
 
@@ -196,6 +243,49 @@ PEN_SETS: dict[str, PenSet] = {
             _pen(180, 0, 80, width=0.5, name="burgundy"),
         ),
     ),
+    # --- Sakura Pigma Micron ---
+    "pigma": PenSet(
+        "pigma",
+        (
+            _pen(20, 20, 20, width=0.45, name="black 05"),
+            _pen(190, 30, 45, width=0.45, name="red 05"),
+            _pen(25, 60, 160, width=0.45, name="blue 05"),
+            _pen(0, 120, 60, width=0.45, name="green 05"),
+            _pen(100, 55, 30, width=0.45, name="brown 05"),
+            _pen(90, 40, 120, width=0.45, name="purple 05"),
+            _pen(230, 110, 20, width=0.45, name="orange 05"),
+            _pen(200, 60, 100, width=0.45, name="rose 05"),
+        ),
+    ),
+    "pigma_sizes": PenSet(
+        "pigma_sizes",
+        (
+            _pen(20, 20, 20, width=0.20, name="black 005"),
+            _pen(20, 20, 20, width=0.25, name="black 01"),
+            _pen(20, 20, 20, width=0.30, name="black 02"),
+            _pen(20, 20, 20, width=0.35, name="black 03"),
+            _pen(20, 20, 20, width=0.45, name="black 05"),
+            _pen(20, 20, 20, width=0.50, name="black 08"),
+        ),
+    ),
+    # --- Copic Markers (representative set, fine tip) ---
+    "copic": PenSet(
+        "copic",
+        (
+            _pen(35, 35, 35, width=0.5, name="100 black"),
+            _pen(220, 50, 60, width=0.5, name="R29 lipstick red"),
+            _pen(240, 130, 50, width=0.5, name="YR07 cadmium orange"),
+            _pen(245, 215, 80, width=0.5, name="Y17 golden yellow"),
+            _pen(80, 175, 90, width=0.5, name="G17 forest green"),
+            _pen(50, 120, 190, width=0.5, name="B29 ultramarine"),
+            _pen(130, 75, 155, width=0.5, name="BV08 blue violet"),
+            _pen(165, 110, 75, width=0.5, name="E57 light walnut"),
+            _pen(180, 180, 180, width=0.5, name="N4 neutral gray"),
+            _pen(225, 155, 175, width=0.5, name="RV14 begonia pink"),
+            _pen(100, 185, 210, width=0.5, name="BG15 aqua"),
+            _pen(245, 200, 140, width=0.5, name="E53 raw silk"),
+        ),
+    ),
 }
 
 
@@ -276,6 +366,32 @@ def load_penset(path: str | Path) -> PenSet:
         pens.append(Pen(color=color, width=width, name=pen_name))
 
     return PenSet(name, tuple(pens))
+
+
+def export_penset(penset: PenSet, path: str | Path) -> None:
+    """Export a pen set to a TOML file.
+
+    Writes a TOML file that can be loaded with ``load_penset`` or shared
+    with other users.
+
+    Args:
+        penset: The pen set to export.
+        path: The output file path (should end in .toml).
+    """
+    path = Path(path)
+    lines = ["[penset]", f'name = "{penset.name}"', ""]
+
+    for pen in penset.pens:
+        lines.append("[[penset.pens]]")
+        color_hex = f"#{pen.color.red:02x}{pen.color.green:02x}{pen.color.blue:02x}"
+        lines.append(f'color = "{color_hex}"')
+        if pen.width is not None:
+            lines.append(f"width = {pen.width}")
+        if pen.name is not None:
+            lines.append(f'name = "{pen.name}"')
+        lines.append("")
+
+    path.write_text("\n".join(lines))
 
 
 class PenSetParamType(click.ParamType):

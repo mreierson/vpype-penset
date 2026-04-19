@@ -10,9 +10,9 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [{ name = "mreierson", email = "mreierson@users.noreply.github.com" }]
-keywords = ["vpype", "penset", "plotter", "generative-art", "pen-plotter", "color"]
+keywords = ["vpype", "pen", "penset", "plotter", "color", "generative-art", "pen-plotter"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Plugins",
     "Intended Audience :: Developers",
     "Intended Audience :: End Users/Desktop",
@@ -45,12 +45,15 @@ Homepage = "https://github.com/mreierson/vpype-penset"
 Repository = "https://github.com/mreierson/vpype-penset"
 Documentation = "https://github.com/mreierson/vpype-penset#readme"
 Issues = "https://github.com/mreierson/vpype-penset/issues"
+Changelog = "https://github.com/mreierson/vpype-penset/blob/main/CHANGELOG.md"
 
 [project.entry-points."vpype.plugins"]
 penset = "vpype_penset.commands.penset_cmd:penset"
 colorize = "vpype_penset.commands.colorize:colorize"
 peninfo = "vpype_penset.commands.peninfo_cmd:peninfo"
 pensets = "vpype_penset.commands.pensets_cmd:pensets"
+penexport = "vpype_penset.commands.penexport_cmd:penexport"
+penswatch = "vpype_penset.commands.penswatch_cmd:penswatch"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/vpype_penset"]

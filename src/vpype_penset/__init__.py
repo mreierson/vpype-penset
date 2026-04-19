@@ -2,7 +2,7 @@
 
 __version__ = "0.1.0"
 
-from .penset import PEN_SETS, Pen, PenSet, PenSetParamType, load_penset
+from .penset import PEN_SETS, Pen, PenSet, PenSetParamType, export_penset, load_penset
 from .pipeline import PENSET_METADATA_KEY, resolve_penset, store_penset
 
 __all__ = [
@@ -10,6 +10,7 @@ __all__ = [
     "Pen",
     "PenSet",
     "PenSetParamType",
+    "export_penset",
     "load_penset",
     "PENSET_METADATA_KEY",
     "resolve_penset",

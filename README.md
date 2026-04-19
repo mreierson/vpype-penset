@@ -76,6 +76,9 @@ vpype penset my-pens.toml ... colorize write out.svg
 | <img src="docs/images/stabilo88.png" width="80"> | `stabilo88` | 8 | Stabilo Point 88 pen colors (0.4mm) |
 | <img src="docs/images/staedtler.png" width="80"> | `staedtler` | 8 | Staedtler Triplus pen colors (0.3mm) |
 | <img src="docs/images/pilot_g2.png" width="80"> | `pilot_g2` | 8 | Pilot G-2 0.5 roller ink pen colors |
+| | `pigma` | 8 | Sakura Pigma Micron colors (0.45mm / size 05) |
+| | `pigma_sizes` | 6 | Sakura Pigma Micron black in 6 tip sizes (005-08) |
+| | `copic` | 12 | Copic marker representative set (fine tip 0.5mm) |
 
 ## Commands
 
@@ -145,28 +148,45 @@ receive both `vp_color` and (if present) `vp_pen_width` properties.
 
 ## API for Plugin Developers
 
-vpype-penset is designed to be consumed by other vpype plugins:
+vpype-penset provides the palette data model and built-in pen sets. Generators
+do **not** need to import or depend on vpype-penset directly. Instead, the
+recommended integration pattern uses `penassign` (from vpype-linemod) as the
+sole interface between generators and pen/palette selection:
 
-```python
-from vpype_penset import PenSet, PEN_SETS, PenSetParamType
-from vpype_penset import resolve_penset, store_penset, PENSET_METADATA_KEY
-
-# Add --penset option to your Click command
-@click.option("--penset", type=PenSetParamType(), default=None)
-
-# Resolve pen set from CLI arg or document metadata
-ps = resolve_penset(doc, penset_arg)
-
-# Store pen set for downstream commands
-store_penset(doc, my_penset)
-
-# Sample colors for N layers
-colors = ps.sample_colors(num_layers)  # Cycles if N > pen set size
+```
+generator -> layers -> penassign -> colorize -> write
 ```
 
-### Pipeline Metadata
+1. **Generators** produce geometry on numbered layers (using `-l`/`--layer`).
+2. **`penassign`** (vpype-linemod) maps layers to pens from the active palette.
+3. **`colorize`** (vpype-penset) applies pen colors and widths to layers.
+
+### Data model exports
+
+If you are building tooling that works with pen sets programmatically:
+
+```python
+from vpype_penset import PenSet, Pen, PEN_SETS, load_penset
+
+# Access a built-in pen set
+ps = PEN_SETS["stabilo88"]
+
+# Sample colors for N layers (cycles if N > pen set size)
+colors = ps.sample_colors(num_layers)
+
+# Interpolate a gradient
+gradient = ps.interpolate(12)
+
+# Load a custom pen set from TOML
+custom = load_penset("my-pens.toml")
+```
+
+### Pipeline metadata
 
 Pen sets flow through the pipeline via `doc.metadata["vpype_penset.active"]`.
+The `store_penset()` and `resolve_penset()` helpers manage this metadata, but
+most plugins should not need to call them directly -- the `penset` and
+`colorize` CLI commands handle the pipeline flow.
 
 ## License
 

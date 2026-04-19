@@ -6,7 +6,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:source>vpype penset viridis circle -l 1 0 0 5.0cm circle -l 2 0 0 4.55cm circle -l 3 0 0 4.09cm circle -l 4 0 0 3.64cm circle -l 5 0 0 3.18cm circle -l 6 0 0 2.73cm circle -l 7 0 0 2.27cm circle -l 8 0 0 1.82cm circle -l 9 0 0 1.36cm circle -l 10 0 0 0.91cm circle -l 11 0 0 0.45cm colorize write docs/images/viridis.svg
 </dc:source>
-        <dc:date>2026-04-02T23:56:31.938128</dc:date>
+        <dc:date>2026-04-05T15:21:24.325393</dc:date>
       </cc:Work>
     </rdf:RDF>
   </metadata>

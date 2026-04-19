@@ -10,6 +10,7 @@ from vpype_penset.penset import (
     PenSetParamType,
     _parse_hex_color,
     _parse_pen_spec,
+    export_penset,
     load_penset,
 )
 
@@ -117,6 +118,76 @@ class TestPenSet:
         ps = PenSet("test", (Pen(color=vp.Color(0, 0, 0), width=0.7),))
         pens = ps.sample_pens(3)
         assert all(p.width == 0.7 for p in pens)
+
+
+class TestInterpolate:
+    """Tests for PenSet.interpolate()."""
+
+    @pytest.fixture()
+    def six_pen_set(self) -> PenSet:
+        """A 6-pen gradient from black to white for predictable interpolation."""
+        return PenSet(
+            "grad",
+            tuple(
+                Pen(color=vp.Color(v, v, v))
+                for v in (0, 50, 100, 150, 200, 250)
+            ),
+        )
+
+    def test_interpolate_same_count(self, six_pen_set: PenSet):
+        result = six_pen_set.interpolate(6)
+        assert isinstance(result, PenSet)
+        assert len(result) == 6
+        # Colors should match the originals exactly.
+        for orig, interp in zip(six_pen_set.pens, result.pens, strict=True):
+            assert interp.color.red == orig.color.red
+            assert interp.color.green == orig.color.green
+            assert interp.color.blue == orig.color.blue
+
+    def test_interpolate_expand(self, six_pen_set: PenSet):
+        result = six_pen_set.interpolate(12)
+        assert isinstance(result, PenSet)
+        assert len(result) == 12
+        # First and last colors must match the source endpoints.
+        assert result.pens[0].color.red == 0
+        assert result.pens[-1].color.red == 250
+        # All colors should be valid vp.Color instances.
+        for pen in result.pens:
+            assert isinstance(pen.color, vp.Color)
+
+    def test_interpolate_contract(self, six_pen_set: PenSet):
+        result = six_pen_set.interpolate(3)
+        assert isinstance(result, PenSet)
+        assert len(result) == 3
+        # First and last should match endpoints.
+        assert result.pens[0].color.red == 0
+        assert result.pens[-1].color.red == 250
+
+    def test_interpolate_single(self, six_pen_set: PenSet):
+        result = six_pen_set.interpolate(1)
+        assert isinstance(result, PenSet)
+        assert len(result) == 1
+        # Should return the first color.
+        assert result.pens[0].color.red == 0
+
+    def test_interpolate_two(self, six_pen_set: PenSet):
+        result = six_pen_set.interpolate(2)
+        assert isinstance(result, PenSet)
+        assert len(result) == 2
+        # First and last color of the source.
+        assert result.pens[0].color.red == 0
+        assert result.pens[1].color.red == 250
+
+    def test_interpolate_names_and_width(self, six_pen_set: PenSet):
+        result = six_pen_set.interpolate(4)
+        for i, pen in enumerate(result.pens):
+            assert pen.name == f"interp-{i}"
+            assert pen.width is None
+
+    def test_interpolate_returns_penset(self, six_pen_set: PenSet):
+        result = six_pen_set.interpolate(5)
+        assert isinstance(result, PenSet)
+        assert result.name == "grad-interp"
 
 
 class TestParseHexColor:
@@ -248,3 +319,47 @@ class TestLoadPenset:
         toml_file.write_text('[[penset.pens]]\nwidth = 0.7\nname = "no-color"\n')
         with pytest.raises(ValueError, match="missing 'color'"):
             load_penset(toml_file)
+
+
+class TestExportPenset:
+    def test_export_roundtrip(self, tmp_path):
+        """Export a pen set, then load it back and verify it matches."""
+        ps = PenSet(
+            "roundtrip",
+            (
+                Pen(color=vp.Color(255, 0, 0), width=0.7, name="Red"),
+                Pen(color=vp.Color(0, 128, 255), width=0.3, name="Blue"),
+                Pen(color=vp.Color(0, 200, 0)),
+            ),
+        )
+        toml_file = tmp_path / "exported.toml"
+        export_penset(ps, toml_file)
+
+        loaded = load_penset(toml_file)
+        assert loaded.name == "roundtrip"
+        assert len(loaded.pens) == 3
+        assert loaded.pens[0].color.red == 255
+        assert loaded.pens[0].width == 0.7
+        assert loaded.pens[0].name == "Red"
+        assert loaded.pens[1].color.blue == 255
+        assert loaded.pens[1].width == 0.3
+        assert loaded.pens[2].width is None
+        assert loaded.pens[2].name is None
+
+    def test_export_builtin_roundtrip(self, tmp_path):
+        """Export a built-in pen set and reload it."""
+        from vpype_penset.penset import PEN_SETS
+
+        ps = PEN_SETS["stabilo88"]
+        toml_file = tmp_path / "stabilo88.toml"
+        export_penset(ps, toml_file)
+
+        loaded = load_penset(toml_file)
+        assert loaded.name == ps.name
+        assert len(loaded.pens) == len(ps.pens)
+        for orig, exported in zip(ps.pens, loaded.pens, strict=True):
+            assert orig.color.red == exported.color.red
+            assert orig.color.green == exported.color.green
+            assert orig.color.blue == exported.color.blue
+            assert orig.width == exported.width
+            assert orig.name == exported.name

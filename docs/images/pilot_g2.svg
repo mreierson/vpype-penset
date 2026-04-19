@@ -6,7 +6,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:source>vpype penset pilot_g2 circle -l 1 0 0 5.0cm circle -l 2 0 0 4.38cm circle -l 3 0 0 3.75cm circle -l 4 0 0 3.12cm circle -l 5 0 0 2.5cm circle -l 6 0 0 1.88cm circle -l 7 0 0 1.25cm circle -l 8 0 0 0.62cm colorize write docs/images/pilot_g2.svg
 </dc:source>
-        <dc:date>2026-04-02T23:56:33.980842</dc:date>
+        <dc:date>2026-04-05T15:21:26.403666</dc:date>
       </cc:Work>
     </rdf:RDF>
   </metadata>

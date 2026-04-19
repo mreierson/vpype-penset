@@ -6,7 +6,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:source>vpype penset grayscale circle -l 1 0 0 5.0cm circle -l 2 0 0 4.0cm circle -l 3 0 0 3.0cm circle -l 4 0 0 2.0cm circle -l 5 0 0 1.0cm colorize write docs/images/grayscale.svg
 </dc:source>
-        <dc:date>2026-04-02T23:56:31.183202</dc:date>
+        <dc:date>2026-04-05T15:21:23.568844</dc:date>
       </cc:Work>
     </rdf:RDF>
   </metadata>

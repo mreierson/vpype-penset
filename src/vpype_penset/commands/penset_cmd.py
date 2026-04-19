@@ -15,8 +15,9 @@ def penset(doc: vp.Document, penset_source: PenSet) -> vp.Document:
     """Set the active pen set for downstream commands.
 
     PENSET_SOURCE can be a predefined name (warm, cool, earth, rainbow,
-    grayscale, viridis, stabilo88, staedtler, pilot_g2), comma-separated hex
-    colors ('#ff0000,#00ff00,#0000ff'), or a TOML file path.
+    grayscale, viridis, stabilo88, staedtler, pilot_g2, pigma,
+    pigma_sizes, copic), comma-separated hex colors
+    ('#ff0000,#00ff00,#0000ff'), or a TOML file path.
 
     After setting the pen set, use -l on geometry commands to target
     specific pens. Colorize assigns pen 1 to layer 1, pen 2 to layer 2, etc.

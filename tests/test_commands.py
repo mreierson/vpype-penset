@@ -144,3 +144,61 @@ class TestPeninfoCommand:
     def test_peninfo_with_override(self):
         doc = vpype_cli.execute("peninfo --penset warm")
         assert doc is not None
+
+
+class TestPenexportCommand:
+    def test_penexport_creates_file(self, tmp_path):
+        output = tmp_path / "out.toml"
+        doc = vpype_cli.execute(f'penset stabilo88 penexport "{output}"')
+        assert doc is not None
+        assert output.exists()
+        content = output.read_text()
+        assert "stabilo88" in content
+        assert "#000000" in content
+
+    def test_penexport_with_override(self, tmp_path):
+        output = tmp_path / "warm.toml"
+        doc = vpype_cli.execute(f'penexport --penset warm "{output}"')
+        assert doc is not None
+        assert output.exists()
+
+    def test_penexport_roundtrip(self, tmp_path):
+        """Export and re-import a pen set via CLI."""
+        output = tmp_path / "trip.toml"
+        vpype_cli.execute(f'penset pilot_g2 penexport "{output}"')
+        doc = vpype_cli.execute(
+            f'penset "{output}" '
+            "line --layer 1 0 0 10mm 10mm "
+            "line --layer 2 0 0 20mm 20mm "
+            "colorize"
+        )
+        assert doc is not None
+        layers = sorted(doc.layers)
+        assert len(layers) == 2
+        for lid in layers:
+            assert doc[lid].property("vp_color") is not None
+            assert doc[lid].property("vp_pen_width") == 0.5
+
+
+class TestPenswatchCommand:
+    def test_penswatch_creates_layers(self):
+        doc = vpype_cli.execute("penset stabilo88 penswatch colorize")
+        assert doc is not None
+        layers = sorted(doc.layers)
+        # stabilo88 has 8 pens, so we expect 8 layers
+        assert len(layers) == 8
+        for lid in layers:
+            assert doc[lid].property("vp_color") is not None
+
+    def test_penswatch_with_override(self):
+        doc = vpype_cli.execute("penswatch --penset warm colorize")
+        assert doc is not None
+        layers = sorted(doc.layers)
+        assert len(layers) == 6  # warm has 6 pens
+
+    def test_penswatch_geometry_present(self):
+        doc = vpype_cli.execute("penset cool penswatch")
+        assert doc is not None
+        for lid in sorted(doc.layers):
+            # Each layer should have lines (rect outline + fill lines)
+            assert len(doc[lid]) > 0

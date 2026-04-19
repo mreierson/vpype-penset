@@ -6,7 +6,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:source>vpype penset rainbow circle -l 1 0 0 5.0cm circle -l 2 0 0 4.29cm circle -l 3 0 0 3.57cm circle -l 4 0 0 2.86cm circle -l 5 0 0 2.14cm circle -l 6 0 0 1.43cm circle -l 7 0 0 0.71cm colorize write docs/images/rainbow.svg
 </dc:source>
-        <dc:date>2026-04-02T23:56:30.539729</dc:date>
+        <dc:date>2026-04-05T15:21:22.941394</dc:date>
       </cc:Work>
     </rdf:RDF>
   </metadata>
