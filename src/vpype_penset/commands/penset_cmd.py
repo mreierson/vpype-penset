@@ -31,4 +31,4 @@ def penset(doc: vp.Document, penset_source: PenSet) -> vp.Document:
     return doc
 
 
-penset.help_group = "Pen Set"
+penset.help_group = "Pen Set"  # type: ignore[attr-defined]

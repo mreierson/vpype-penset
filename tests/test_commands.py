@@ -83,9 +83,7 @@ class TestPensetCommand:
 
 class TestColorizeCommand:
     def test_colorize_applies_colors(self):
-        doc = vpype_cli.execute(
-            "penset rainbow " "line 0 0 10mm 10mm " "line 0 0 20mm 20mm " "colorize"
-        )
+        doc = vpype_cli.execute("penset rainbow line 0 0 10mm 10mm line 0 0 20mm 20mm colorize")
         assert doc is not None
         layers = sorted(doc.layers)
         assert len(layers) >= 1
@@ -94,9 +92,7 @@ class TestColorizeCommand:
             assert color is not None
 
     def test_colorize_sets_pen_width(self):
-        doc = vpype_cli.execute(
-            "penset stabilo88 " "line 0 0 10mm 10mm " "line 0 0 20mm 20mm " "colorize"
-        )
+        doc = vpype_cli.execute("penset stabilo88 line 0 0 10mm 10mm line 0 0 20mm 20mm colorize")
         assert doc is not None
         layers = sorted(doc.layers)
         for lid in layers:
@@ -104,7 +100,7 @@ class TestColorizeCommand:
             assert width == 0.4
 
     def test_colorize_no_width_when_unspecified(self):
-        doc = vpype_cli.execute("penset warm " "line 0 0 10mm 10mm " "colorize")
+        doc = vpype_cli.execute("penset warm line 0 0 10mm 10mm colorize")
         assert doc is not None
         layers = sorted(doc.layers)
         for lid in layers:
@@ -113,15 +109,12 @@ class TestColorizeCommand:
             assert width is None
 
     def test_colorize_with_override(self):
-        doc = vpype_cli.execute("line 0 0 10mm 10mm " "colorize --penset cool")
+        doc = vpype_cli.execute("line 0 0 10mm 10mm colorize --penset cool")
         assert doc is not None
 
     def test_colorize_reverse(self):
         doc = vpype_cli.execute(
-            "penset warm "
-            "line 0 0 10mm 10mm "
-            "line 0 0 20mm 20mm "
-            "colorize --reverse"
+            "penset warm line 0 0 10mm 10mm line 0 0 20mm 20mm colorize --reverse"
         )
         assert doc is not None
 

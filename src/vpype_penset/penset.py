@@ -40,8 +40,7 @@ class PenSet:
         # Auto-wrap bare vp.Color objects in Pen.
         # Because frozen=True, we must use object.__setattr__.
         wrapped = tuple(
-            Pen(color=item) if isinstance(item, vp.Color) else item
-            for item in self.pens
+            Pen(color=item) if isinstance(item, vp.Color) else item for item in self.pens
         )
         object.__setattr__(self, "pens", wrapped)
 
@@ -80,9 +79,7 @@ def _c(r: int, g: int, b: int) -> vp.Color:
     return vp.Color(r, g, b)
 
 
-def _pen(
-    r: int, g: int, b: int, width: float | None = None, name: str | None = None
-) -> Pen:
+def _pen(r: int, g: int, b: int, width: float | None = None, name: str | None = None) -> Pen:
     return Pen(color=_c(r, g, b), width=width, name=name)
 
 

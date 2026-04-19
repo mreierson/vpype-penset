@@ -32,8 +32,7 @@ def peninfo(doc: vp.Document, penset_arg: PenSet | None) -> vp.Document:
     ps = resolve_penset(doc, penset_arg)
     if ps is None:
         raise click.UsageError(
-            "No pen set active. Use 'penset <name>' before peninfo, "
-            "or pass --penset <name>."
+            "No pen set active. Use 'penset <name>' before peninfo, or pass --penset <name>."
         )
 
     click.echo(f"Pen set: {ps.name} ({len(ps)} pens)")
@@ -50,4 +49,4 @@ def peninfo(doc: vp.Document, penset_arg: PenSet | None) -> vp.Document:
     return doc
 
 
-peninfo.help_group = "Pen Set"
+peninfo.help_group = "Pen Set"  # type: ignore[attr-defined]

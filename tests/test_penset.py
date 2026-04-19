@@ -45,9 +45,7 @@ class TestPen:
 
 class TestPenSet:
     def test_sample_pens_exact_count(self):
-        ps = PenSet(
-            "test", (Pen(color=vp.Color(255, 0, 0)), Pen(color=vp.Color(0, 255, 0)))
-        )
+        ps = PenSet("test", (Pen(color=vp.Color(255, 0, 0)), Pen(color=vp.Color(0, 255, 0))))
         pens = ps.sample_pens(2)
         assert len(pens) == 2
         assert pens[0].color.red == 255
@@ -66,9 +64,7 @@ class TestPenSet:
         assert len(pens) == 2
 
     def test_sample_pens_more_than_available_cycles(self):
-        ps = PenSet(
-            "test", (Pen(color=vp.Color(255, 0, 0)), Pen(color=vp.Color(0, 255, 0)))
-        )
+        ps = PenSet("test", (Pen(color=vp.Color(255, 0, 0)), Pen(color=vp.Color(0, 255, 0))))
         pens = ps.sample_pens(5)
         assert len(pens) == 5
         assert pens[0].color.red == 255  # index 0
@@ -109,9 +105,7 @@ class TestPenSet:
         assert ps.pens[0].color.red == 255
 
     def test_len(self):
-        ps = PenSet(
-            "test", (Pen(color=vp.Color(0, 0, 0)), Pen(color=vp.Color(255, 255, 255)))
-        )
+        ps = PenSet("test", (Pen(color=vp.Color(0, 0, 0)), Pen(color=vp.Color(255, 255, 255))))
         assert len(ps) == 2
 
     def test_frozen(self):
@@ -202,12 +196,7 @@ class TestPenSetParamType:
     def test_toml_file(self, tmp_path):
         toml_file = tmp_path / "pens.toml"
         toml_file.write_text(
-            "[penset]\n"
-            'name = "from-param"\n'
-            "\n"
-            "[[penset.pens]]\n"
-            'color = "#ff0000"\n'
-            "width = 0.5\n"
+            '[penset]\nname = "from-param"\n\n[[penset.pens]]\ncolor = "#ff0000"\nwidth = 0.5\n'
         )
         pt = PenSetParamType()
         result = pt.convert(str(toml_file), None, None)
@@ -242,7 +231,7 @@ class TestLoadPenset:
 
     def test_load_minimal(self, tmp_path):
         toml_file = tmp_path / "minimal.toml"
-        toml_file.write_text("[[penset.pens]]\n" 'color = "#ff0000"\n')
+        toml_file.write_text('[[penset.pens]]\ncolor = "#ff0000"\n')
         ps = load_penset(toml_file)
         assert ps.name == "minimal"  # derives from filename
         assert len(ps.pens) == 1
@@ -256,6 +245,6 @@ class TestLoadPenset:
 
     def test_load_missing_color_raises(self, tmp_path):
         toml_file = tmp_path / "bad.toml"
-        toml_file.write_text("[[penset.pens]]\n" "width = 0.7\n" 'name = "no-color"\n')
+        toml_file.write_text('[[penset.pens]]\nwidth = 0.7\nname = "no-color"\n')
         with pytest.raises(ValueError, match="missing 'color'"):
             load_penset(toml_file)

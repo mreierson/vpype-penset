@@ -48,8 +48,7 @@ def colorize(
     ps = resolve_penset(doc, penset_arg)
     if ps is None:
         raise click.UsageError(
-            "No pen set active. Use 'penset <name>' before colorize, "
-            "or pass --penset <name>."
+            "No pen set active. Use 'penset <name>' before colorize, or pass --penset <name>."
         )
 
     layer_ids = sorted(doc.layers)
@@ -68,4 +67,4 @@ def colorize(
     return doc
 
 
-colorize.help_group = "Pen Set"
+colorize.help_group = "Pen Set"  # type: ignore[attr-defined]
